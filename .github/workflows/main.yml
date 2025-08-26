@@ -61,7 +61,7 @@ jobs:
       # replace "application" below with your entry file (e.g. "artisan" or the app's bin name).
       - name: Build PHAR
         run: |
-          if [ -f application ]; then
+          if [ -f backup-server ]; then
             php backup-server app:build --build-version=1
           else
             echo "Launcher 'application' not found. Update this step to call your launcher file."
