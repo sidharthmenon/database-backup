@@ -62,7 +62,7 @@ jobs:
       - name: Build PHAR
         run: |
           if [ -f application ]; then
-            php application app:build
+            php backup-server app:build --build-version=1
           else
             echo "Launcher 'application' not found. Update this step to call your launcher file."
             exit 1
