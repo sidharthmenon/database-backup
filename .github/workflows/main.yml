@@ -44,6 +44,11 @@ jobs:
       - name: Install dependencies (no dev for build step later)
         run: composer install --no-interaction --prefer-dist --no-progress
 
+      - name: Generate APP_KEY and write .env
+        run: |
+          KEY="base64:$(openssl rand -base64 32 | tr -d '\n')"
+          printf "APP_KEY=%s\n" "$KEY" > .env
+
       # --- Ensure Box is available for Laravel Zero's app:build ---
       # Preferred: add "humbug/box": "^4.5" to require-dev in composer.json.
       # This step shims vendor/bin/box if it's missing (fixes "Could not open input file: vendor/bin/box").
