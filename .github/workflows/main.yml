@@ -72,7 +72,7 @@ jobs:
       - name: Locate artifact
         id: findphar
         run: |
-          PHAR=$(ls -1 builds/*.phar | head -n 1)
+          PHAR=$(ls -1 builds/* | head -n 1)
           if [ -z "$PHAR" ]; then
             echo "No PHAR found in ./builds. Check your build config."
             exit 1
