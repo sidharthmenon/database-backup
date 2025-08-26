@@ -1,0 +1,21 @@
+services:
+  pgsql:
+    image: 'postgres:17'
+    ports:
+      - '5432:5432'
+    environment:
+      PGPASSWORD: 'secret'
+      POSTGRES_DB: 'test'
+      POSTGRES_USER: 'test'
+      POSTGRES_PASSWORD: 'secret'
+    volumes:
+      - 'sail-backup:/var/lib/postgresql/data'
+    networks:
+      - sail
+networks:
+  sail:
+    driver: bridge
+volumes:
+  sail-backup:
+    driver: local
+
