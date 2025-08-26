@@ -5,7 +5,7 @@
         "bootstrap",
         "config",
         "vendor",
-        "database"
+        "database/migrations"
     ],
     "files": [
         "composer.json"
