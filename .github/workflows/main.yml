@@ -1,0 +1,100 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - "master"
+  workflow_dispatch:   # allow manual runs
+
+permissions:
+  contents: write      # needed to create a release & upload assets
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # PHP + common extensions used by Laravel / Laravel Zero
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, intl, bcmath, pcntl, pdo, sqlite, zip
+          coverage: none
+
+      - name: Show PHP versions
+        run: php -v && composer -V
+
+      - name: Cache composer deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache/files
+            vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-
+
+      - name: Install dependencies (no dev for build step later)
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      # --- Ensure Box is available for Laravel Zero's app:build ---
+      # Preferred: add "humbug/box": "^4.5" to require-dev in composer.json.
+      # This step shims vendor/bin/box if it's missing (fixes "Could not open input file: vendor/bin/box").
+      - name: Ensure Box is available at vendor/bin/box
+        run: |
+          mkdir -p vendor/bin
+          if [ ! -f vendor/bin/box ]; then
+            curl -sSL https://github.com/box-project/box/releases/latest/download/box.phar -o vendor/bin/box
+            chmod +x vendor/bin/box
+          fi
+          php vendor/bin/box --version
+
+      # Build the PHAR using Laravel Zero's build command.
+      # The launcher file is usually named "application" in project root. If yours is different,
+      # replace "application" below with your entry file (e.g. "artisan" or the app's bin name).
+      - name: Build PHAR
+        run: |
+          if [ -f application ]; then
+            php application app:build
+          else
+            echo "Launcher 'application' not found. Update this step to call your launcher file."
+            exit 1
+          fi
+
+      # Find the built PHAR (Laravel Zero defaults to ./builds/<name>.phar)
+      - name: Locate artifact
+        id: findphar
+        run: |
+          PHAR=$(ls -1 builds/*.phar | head -n 1)
+          if [ -z "$PHAR" ]; then
+            echo "No PHAR found in ./builds. Check your build config."
+            exit 1
+          fi
+          echo "phar_path=$PHAR" >> $GITHUB_OUTPUT
+          echo "phar_name=$(basename "$PHAR")" >> $GITHUB_OUTPUT
+
+      - name: Upload artifact (CI)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.findphar.outputs.phar_name }}
+          path: ${{ steps.findphar.outputs.phar_path }}
+          if-no-files-found: error
+          retention-days: 14
+
+      # Create or update a GitHub Release for this tag and attach the PHAR
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: ${{ steps.findphar.outputs.phar_path }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
