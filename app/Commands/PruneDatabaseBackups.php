@@ -119,6 +119,6 @@ class PruneDatabaseBackups extends Command
      */
     public function schedule(Schedule $schedule): void
     {
-        $schedule->command(static::class)->dailyAt("06:00");
+        // $schedule->command(static::class)->dailyAt("06:00");
     }
 }
