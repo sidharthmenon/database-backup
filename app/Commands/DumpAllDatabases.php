@@ -58,7 +58,7 @@ class DumpAllDatabases extends Command
             $absPath  = $disk->path($relPath);
 
             $this->info("▶ Dumping [{$src->name}] ({$src->driver}:" . ($src->database ?: 'all') . ") → {$relPath}");
-            Log::info()("▶ Dumping [{$src->name}] ({$src->driver}:" . ($src->database ?: 'all') . ") → {$relPath}");
+            Log::info("▶ Dumping [{$src->name}] ({$src->driver}:" . ($src->database ?: 'all') . ") → {$relPath}");
 
             try {
                 $dumper = match ($src->driver) {
