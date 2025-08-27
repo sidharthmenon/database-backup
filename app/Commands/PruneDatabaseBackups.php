@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Log;
 use LaravelZero\Framework\Commands\Command;
 use Illuminate\Support\Facades\Storage;
 
@@ -36,12 +37,16 @@ class PruneDatabaseBackups extends Command
 
         if (!$disk->exists($root)) {
             $this->warn("Root '{$root}' not found on disk '{$diskName}'. Nothing to prune.");
+            Log::warn("Root '{$root}' not found on disk '{$diskName}'. Nothing to prune.");
+
             return self::SUCCESS;
         }
 
         $dbDirs = $disk->directories($root);
         if (empty($dbDirs)) {
             $this->info("No database directories under '{$root}'.");
+            Log::info("No database directories under '{$root}'.");
+
             return self::SUCCESS;
         }
 
@@ -63,6 +68,8 @@ class PruneDatabaseBackups extends Command
             $count = count($files);
             if ($count <= $keep) {
                 $this->line("✔ {$dbDir}: {$count} file(s), nothing to prune.");
+                Log::info("✔ {$dbDir}: {$count} file(s), nothing to prune.");
+
                 continue;
             }
 
@@ -73,28 +80,36 @@ class PruneDatabaseBackups extends Command
             $toDelete = array_slice($files, $keep);
 
             $this->info("Pruning '{$dbDir}': keeping " . count($toKeep) . ", deleting " . count($toDelete) . ".");
+            Log::info("Pruning '{$dbDir}': keeping " . count($toKeep) . ", deleting " . count($toDelete) . ".");
 
             foreach ($toDelete as $path) {
                 if ($dryRun) {
                     $this->line("  - (dry-run) delete {$path}");
+                    Log::info("  - (dry-run) delete {$path}");
                     continue;
                 }
 
                 try {
                     if ($disk->delete($path)) {
                         $this->line("  - deleted {$path}");
+                        Log::info("  - deleted {$path}");
+
                         $totalDeleted++;
                     } else {
                         $this->warn("  - failed to delete {$path}");
+                        Log::warn("  - failed to delete {$path}");
                     }
                 } catch (\Throwable $e) {
                     $this->error("  - error deleting {$path}: {$e->getMessage()}");
+                    Log::error("  - error deleting {$path}: {$e->getMessage()}");
                     report($e);
                 }
             }
         }
 
         $this->info($dryRun ? "Dry run complete." : "Done. Deleted {$totalDeleted} file(s).");
+        Log::info($dryRun ? "Dry run complete." : "Done. Deleted {$totalDeleted} file(s).");
+        
         return self::SUCCESS;
 
     }

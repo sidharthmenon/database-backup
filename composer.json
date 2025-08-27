@@ -20,6 +20,7 @@
         "illuminate/database": "^12.17",
         "illuminate/encryption": "^12.25",
         "illuminate/http": "^12.17",
+        "illuminate/log": "^12.17",
         "intonate/tinker-zero": "^1.2",
         "laravel-zero/framework": "^12.0",
         "spatie/db-dumper": "^3.8"

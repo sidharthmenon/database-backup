@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 use App\BackupSource;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Spatie\DbDumper\Compressors\GzipCompressor;
 use Spatie\DbDumper\Databases\MySql;
@@ -40,6 +41,7 @@ class DumpAllDatabases extends Command
 
         if ($sources->isEmpty()) {
             $this->warn('No active backup sources found.');
+            Log::warn('No active backup sources found.');
             return self::SUCCESS;
         }
 
@@ -56,6 +58,7 @@ class DumpAllDatabases extends Command
             $absPath  = $disk->path($relPath);
 
             $this->info("▶ Dumping [{$src->name}] ({$src->driver}:" . ($src->database ?: 'all') . ") → {$relPath}");
+            Log::info()("▶ Dumping [{$src->name}] ({$src->driver}:" . ($src->database ?: 'all') . ") → {$relPath}");
 
             try {
                 $dumper = match ($src->driver) {
@@ -131,11 +134,15 @@ class DumpAllDatabases extends Command
                 $this->line("   ✔ Dumped to: storage/app/{$relPath}");
             } catch (\Throwable $e) {
                 $this->error("   ✖ Failed: {$e->getMessage()}");
+                Log::error("   ✖ Failed: {$e->getMessage()}");
+
                 report($e);
             }
         }
 
         $this->info('Done.');
+        Log::info('Done.');
+
         return self::SUCCESS;
     }
 
