@@ -6,6 +6,7 @@
 /database/database.sqlite
 .env
 /storage/app/private/db-dumps
+/storage/logs
 /builds
 /.box_dump
 /db-dumps
