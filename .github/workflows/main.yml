@@ -44,11 +44,6 @@ jobs:
       - name: Install dependencies (no dev for build step later)
         run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Generate APP_KEY and write .env
-        run: |
-          KEY="base64:$(openssl rand -base64 32 | tr -d '\n')"
-          printf "APP_KEY=%s\n" "$KEY" > .env
-
       # --- Ensure Box is available for Laravel Zero's app:build ---
       # Preferred: add "humbug/box": "^4.5" to require-dev in composer.json.
       # This step shims vendor/bin/box if it's missing (fixes "Could not open input file: vendor/bin/box").
@@ -65,6 +60,8 @@ jobs:
       # The launcher file is usually named "application" in project root. If yours is different,
       # replace "application" below with your entry file (e.g. "artisan" or the app's bin name).
       - name: Build PHAR
+        env: 
+          APP_KEY: ${{ secrets.APP_KEY }}
         run: |
           if [ -f backup-server ]; then
             php backup-server app:build --build-version=1
