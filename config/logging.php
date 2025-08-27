@@ -18,7 +18,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'syslog'),
+    'default' => env('LOG_CHANNEL', 'daily'),
 
     /*
     |--------------------------------------------------------------------------
