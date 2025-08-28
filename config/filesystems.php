@@ -7,5 +7,9 @@ return [
             'driver' => 'local',
             'root' => getcwd(),
         ],
+        'backup' => [
+            'driver' => 'local',
+            'root' => getcwd().'/backup',
+        ],
     ],
 ];

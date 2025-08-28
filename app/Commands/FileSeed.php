@@ -2,54 +2,49 @@
 
 namespace App\Commands;
 
-use App\BackupSource;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Http;
 use LaravelZero\Framework\Commands\Command;
+use Spatie\BackupServer\Models\Source;
 
-class DbSeed extends Command
+class FileSeed extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'backup:seed-db';
+    protected $signature = 'backup:seed-files';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'import from remote url';
+    protected $description = 'Seed file source';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $response = Http::get(env('REMOTE_DB_SEEDER_URL'))->throw();
+        $response = Http::get(env('REMOTE_FILE_SEEDER_URL'))->throw();
 
         $data = $response->json();
 
         foreach($data as $item){
-            $src = new BackupSource();
+            $src = new Source();
             $src->name = $item['name'];
-            $src->driver = $item['driver'];
             $src->host = $item['host'];
-            $src->database = $item['database'];
-            $src->username = $item['username'];
-            $src->password = $item['password'];
-
-            if($item['driver'] == "mongodb"){
-                $src->auth_db = "admin";
-            }
+            $src->ssh_user = $item['ssh_user'];
+            $src->ssh_private_key_file = '/home/ubuntu/ssh_key.crt';
+            $src->includes = explode(',', $item['includes']);
+            $src->destination_id = env("DEFAULT_DESTINATION");
 
             $src->save();
 
             $this->info(print_r($item));
         }
-
     }
 
     /**

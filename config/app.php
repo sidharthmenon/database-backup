@@ -19,6 +19,9 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'locale' => env('APP_LOCALE', 'en'),
+    'fallback_locale' => 'en',
+
     /*
     |--------------------------------------------------------------------------
     | Application Version
@@ -61,10 +64,22 @@ return [
         App\Providers\AppServiceProvider::class,
         Intonate\TinkerZero\TinkerZeroServiceProvider::class,
         Illuminate\Encryption\EncryptionServiceProvider::class,
+        Spatie\BackupServer\BackupServerServiceProvider::class,
+        Illuminate\Events\EventServiceProvider::class,
+        Illuminate\Bus\BusServiceProvider::class,
+        Illuminate\Queue\QueueServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class,
+        Illuminate\Mail\MailServiceProvider::class,
+        Illuminate\Filesystem\FilesystemServiceProvider::class,
+        Illuminate\Translation\TranslationServiceProvider::class,
     ],
 
     'aliases' => [
         'Crypt' => Illuminate\Support\Facades\Crypt::class,
+        'Notification' => Illuminate\Support\Facades\Notification::class,
+        'Mail'         => Illuminate\Support\Facades\Mail::class,
+        'Queue'        => Illuminate\Support\Facades\Queue::class,
+        'Lang' => Illuminate\Support\Facades\Lang::class,
     ],
 
 ];

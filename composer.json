@@ -17,13 +17,24 @@
     ],
     "require": {
         "php": "^8.2",
+        "illuminate/auth": "^12.26",
+        "illuminate/bus": "^12.26",
         "illuminate/database": "^12.17",
         "illuminate/encryption": "^12.25",
+        "illuminate/events": "^12.26",
+        "illuminate/filesystem": "^12.26",
         "illuminate/http": "^12.17",
         "illuminate/log": "^12.17",
+        "illuminate/mail": "^12.26",
+        "illuminate/notifications": "^12.26",
+        "illuminate/queue": "^12.26",
+        "illuminate/redis": "^12.17",
+        "illuminate/translation": "^12.26",
+        "illuminate/view": "^12.17",
         "intonate/tinker-zero": "^1.2",
         "laravel-zero/framework": "^12.0",
-        "spatie/db-dumper": "^3.8"
+        "spatie/db-dumper": "^3.8",
+        "spatie/laravel-backup-server": "^4.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

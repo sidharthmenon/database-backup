@@ -10,3 +10,5 @@
 /builds
 /.box_dump
 /db-dumps
+/backup
+/logs

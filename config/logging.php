@@ -18,7 +18,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'emergency'),
+    'default' => env('LOG_CHANNEL', 'daily'),
 
     /*
     |--------------------------------------------------------------------------
@@ -124,7 +124,7 @@ return [
         ],
 
         'emergency' => [
-            'path' => './logs/laravel.log',
+            'path' => './logs/emergency.log',
         ],
 
     ],

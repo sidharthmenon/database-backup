@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PruneDatabaseBackups extends Command
 {
-    protected $signature = 'backup:prune
+    protected $signature = 'backup:db-clean
         {--keep=7 : Number of most recent backups to keep per DB}
         {--disk=local : Filesystem disk to use}
         {--root=db-dumps : Root path under the disk containing DB dump folders}
@@ -105,6 +105,6 @@ class PruneDatabaseBackups extends Command
      */
     public function schedule(Schedule $schedule): void
     {
-        // $schedule->command(static::class)->dailyAt("06:00");
+        $schedule->command(static::class)->dailyAt("01:00");
     }
 }
